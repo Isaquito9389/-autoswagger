@@ -10,3 +10,4 @@ tabulate
 tqdm
 presidio-analyzer
 pyyaml
+flask
