@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3>Tableau de bord Professeur</h3>
+<div class="row g-3">
+  {% for s in teacher_subjects %}
+    <div class="col-md-4">
+      <div class="card"><div class="card-body">
+        <h5>{{ s.name }}</h5>
+        <p class="mb-2">Série {{ s.serie }} | Coef {{ s.coefficient }}</p>
+        <a class="btn btn-primary btn-sm" href="{{ url_for('enter_grades', subject_id=s.id) }}">Saisir notes</a>
+        <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('export_gradebook', subject_id=s.id) }}">Exporter cahier</a>
+      </div></div>
+    </div>
+  {% else %}
+    <p>Aucune matière assignée.</p>
+  {% endfor %}
+</div>
+{% endblock %}

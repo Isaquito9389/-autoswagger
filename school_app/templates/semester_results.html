@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<h4>Résultats semestriels - Semestre {{ semester }}</h4>
+<div class="mb-3 d-flex gap-2">
+  <a class="btn btn-outline-success btn-sm" href="{{ url_for('export_results_excel', semester=semester) }}">Export Excel</a>
+  <a class="btn btn-outline-danger btn-sm" href="{{ url_for('export_results_pdf', semester=semester) }}">Export PDF</a>
+  {% if semester not in validated_semesters %}
+    <form method="post" action="{{ url_for('validate_semester', semester=semester) }}">
+      <button class="btn btn-primary btn-sm">Valider semestre</button>
+    </form>
+  {% else %}
+    <span class="badge bg-success">Semestre validé</span>
+  {% endif %}
+</div>
+<table class="table table-sm table-striped bg-white">
+  <tr><th>Rang</th><th>Matricule</th><th>Nom</th><th>Prénom</th><th>Sexe</th><th>Série</th><th>Moyenne Générale</th></tr>
+  {% for row in rows %}
+    <tr class="{% if row.sexe == 'F' %}female-row{% endif %}">
+      <td>{{ row.rang }}</td><td>{{ row.matricule }}</td><td>{{ row.nom }}</td><td>{{ row.prenom }}</td><td>{{ row.sexe }}</td><td>{{ row.serie }}</td><td>{{ row.moyenne_generale }}</td>
+    </tr>
+  {% endfor %}
+</table>
+{% endblock %}

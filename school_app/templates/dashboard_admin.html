@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3>Tableau de bord PP</h3>
+<p>Élèves importés: <strong>{{ students_count }}</strong></p>
+<div class="row g-3">
+  <div class="col-md-4">
+    <div class="card"><div class="card-body">
+      <h5>Créer un professeur</h5>
+      <form method="post" action="{{ url_for('create_teacher') }}">
+        <input class="form-control mb-2" name="full_name" placeholder="Nom complet" required>
+        <input class="form-control mb-2" name="username" placeholder="Identifiant" required>
+        <input class="form-control mb-2" type="password" name="password" placeholder="Mot de passe" required>
+        <button class="btn btn-success btn-sm">Créer</button>
+      </form>
+    </div></div>
+  </div>
+  <div class="col-md-4">
+    <div class="card"><div class="card-body">
+      <h5>Ajouter une matière</h5>
+      <form method="post" action="{{ url_for('create_subject') }}">
+        <input class="form-control mb-2" name="name" placeholder="Matière" required>
+        <select class="form-select mb-2" name="serie" required>
+          <option value="A">Série A</option>
+          <option value="B">Série B</option>
+        </select>
+        <input class="form-control mb-2" type="number" step="0.01" min="0.5" name="coefficient" placeholder="Coefficient" required>
+        <select class="form-select mb-2" name="teacher_id">
+          <option value="">Non assignée</option>
+          {% for t in teachers %}<option value="{{ t.id }}">{{ t.full_name }}</option>{% endfor %}
+        </select>
+        <button class="btn btn-success btn-sm">Ajouter</button>
+      </form>
+    </div></div>
+  </div>
+  <div class="col-md-4">
+    <div class="card"><div class="card-body">
+      <h5>Importer élèves (Excel)</h5>
+      <form method="post" action="{{ url_for('import_students') }}" enctype="multipart/form-data">
+        <input class="form-control mb-2" type="file" accept=".xlsx,.xls" name="excel_file" required>
+        <button class="btn btn-success btn-sm">Importer</button>
+      </form>
+      <small class="text-muted">Colonnes attendues: matricule, nom, prenom, sexe, serie, lv2</small>
+    </div></div>
+  </div>
+</div>
+
+<div class="card mt-4"><div class="card-body">
+  <h5>Matières</h5>
+  <table class="table table-sm">
+    <tr><th>Matière</th><th>Série</th><th>Coef</th><th>Professeur</th></tr>
+    {% for s in subjects %}
+      <tr><td>{{ s.name }}</td><td>{{ s.serie }}</td><td>{{ s.coefficient }}</td><td>{{ s.teacher.full_name if s.teacher else '-' }}</td></tr>
+    {% endfor %}
+  </table>
+</div></div>
+
+<div class="mt-3 d-flex gap-2">
+  <a class="btn btn-outline-primary btn-sm" href="{{ url_for('semester_results', semester=1) }}">Résultats Semestre 1</a>
+  <a class="btn btn-outline-primary btn-sm" href="{{ url_for('semester_results', semester=2) }}">Résultats Semestre 2</a>
+</div>
+{% endblock %}
