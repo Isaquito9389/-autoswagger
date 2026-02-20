@@ -104,18 +104,23 @@ def login_required(role=None):
 
 def parse_interrogations(raw_value: str):
     if not raw_value:
-        return []
+        return [], None
     notes = []
     for part in str(raw_value).replace(";", ",").split(","):
         part = part.strip()
         if not part:
             continue
-        notes.append(float(part))
-    return notes
+        try:
+            notes.append(float(part))
+        except ValueError:
+            return None, f"Note d'interrogation invalide: '{part}'."
+    return notes, None
 
 
 def compute_subject_average(grade: GradeEntry):
-    notes = parse_interrogations(grade.interrogations)
+    notes, parse_error = parse_interrogations(grade.interrogations)
+    if parse_error:
+        return None, parse_error
     if len(notes) < 2 or len(notes) > 4:
         return None, "Interrogations invalides (2 à 4 requises)."
     if grade.devoir1 is None or grade.devoir2 is None:
@@ -310,6 +315,13 @@ def enter_grades(subject_id):
 
     if request.method == "POST":
         semester = int(request.form.get("semester", 1))
+        if SemesterValidation.query.filter_by(semester=semester).first():
+            flash(
+                "Semestre validé: les notes ne peuvent plus être modifiées.",
+                "warning",
+            )
+            return redirect(url_for("enter_grades", subject_id=subject.id, semester=semester))
+
         for student in students:
             inter = request.form.get(f"inter_{student.id}", "")
             d1_raw = request.form.get(f"d1_{student.id}", "")
