@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+<h4>{{ subject.name }} - Série {{ subject.serie }}</h4>
+<form method="post">
+  <div class="d-flex mb-2 align-items-center gap-2">
+    <label>Semestre</label>
+    <select class="form-select form-select-sm w-auto" name="semester">
+      <option value="1" {% if semester==1 %}selected{% endif %}>1</option>
+      <option value="2" {% if semester==2 %}selected{% endif %}>2</option>
+    </select>
+    <button class="btn btn-success btn-sm">Enregistrer</button>
+  </div>
+  <table class="table table-bordered table-sm bg-white">
+    <tr><th>Élève</th><th>Interrogations (2-4, séparées par ,)</th><th>Devoir 1</th><th>Devoir 2</th></tr>
+    {% for st in students %}
+      {% set g = grade_map.get(st.id) %}
+      <tr>
+        <td>{{ st.last_name }} {{ st.first_name }} ({{ st.matricule }})</td>
+        <td><input class="form-control" name="inter_{{ st.id }}" value="{{ g.interrogations if g else '' }}"></td>
+        <td><input class="form-control" type="number" step="0.01" min="0" max="20" name="d1_{{ st.id }}" value="{{ g.devoir1 if g and g.devoir1 is not none else '' }}"></td>
+        <td><input class="form-control" type="number" step="0.01" min="0" max="20" name="d2_{{ st.id }}" value="{{ g.devoir2 if g and g.devoir2 is not none else '' }}"></td>
+      </tr>
+    {% endfor %}
+  </table>
+</form>
+{% endblock %}

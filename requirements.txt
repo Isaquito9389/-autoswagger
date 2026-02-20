@@ -11,3 +11,6 @@ tqdm
 presidio-analyzer
 pyyaml
 flask
+flask-sqlalchemy
+openpyxl
+reportlab
